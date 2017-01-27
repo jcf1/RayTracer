@@ -1,0 +1,105 @@
+                                    **Development Journal**
+
+
+2016-09-26 Report (7-10)
+==========================================================================================
+We first tried to render Sponza. We waited two hours but it did not finish in that time and we needed to stop it to do the other tests. 
+As we did our cores test, we realized that multi threading was actually slower than just using one core. At this point, we've decided to keep it the way it is. We have the general concept down so it is at mvp. Based on early tests, we thought that it was working correctly, but after getting indirect lighting to work, multithreading has seemed to stop working.
+
+Thinking back, and based on what others in the lab are saying, we believe that the lack of member variables might be making our program run slowly. Especially with regards to multithreading.
+
+
+2016-09-26 Indirect Lighting (5-6)
+==========================================================================================
+This was done fairly quickly by simply using our intersectOneRay method again. We achieved the following result:
+
+![Indirect light](indirectLight_10rays.jpg)
+
+This was really bright but that was expected. This was mvp for lighting. We also adding ambient lighting to that
+
+
+
+2016-09-26 MultiThreading (3 - 4)
+==========================================================================================
+This was done fairly quickly. We had a hangup with the syntax, but after reading the various things the class had said about it on the google group and in person, this was done fairly quickly.
+
+
+2016-09-26 Optimization and Gui polish (1-2:30)
+==========================================================================================
+We've optimized our code by getting rid of any places where we pass by value. The big one was where we were
+passing a tri tree by value. We've made everything a shared_ptr.
+
+We also fixed a bug with our shade code where we weren't checking for null surfels returned by the intersectScene method. This was a quick fix. 
+
+Then we worked on making our user interface functional. The big one was making the drop down list work. We simply hard coded in the three resolutions. Then we added the stopwatch feature where the time it took to render the image is displayed.
+
+2016-09-25: Shadows (4 - 7)
+====================================================================================
+To add shadows, all that is needed is to add an isVisible method to our shade method. It will check if the point has an uniterupted line of sight to the light and return black if it does not. We implemented this by copying our intersectScene and changing around the values of the rays. Now we've decided to actually call our intersectScene method in isVisible. This makes it much more elegant.
+
+![Shadow initial rendering](badShadow_CornellBox.jpg)
+
+So everything is in the shadow except for the light. This is a strange issue. We've looked at our rays that we give it but regardless of what we change them to be, we get this same image. We've asked Jamie for help and she recomended bumping the ray. We did this but it did not seem to help. We've decided to change our epsilon values around but still no result.
+
+After a bit of frustration, we've decided to check to see if our intersect scene is the issue. We've put in tritrees intersect scene. This gave us good shadows. So our issue is with our intersect scene. 
+
+We've been looking at our intersect scene, but then we looked at our emails and we saw that we weren't adding in all the neccesary parameters into our hit that we give to the sample. By adding in the barycentric coordinates and the backface boolean, our intersect scene returns the correct shadows.
+
+![Correct Shadows with OUR intersectScene()](640x400_cornell_box.jpg)
+
+2016-09-25: Debugging and Intersect (1 - 3)
+====================================================================================
+We've been told to look at the direct illumination chapter of the graphics codex. We are going to look at that chapter and change our shade function to better fit the description it provides. The biggest difference we have noticed is that we were not using the shading normal of the surfel. After adding that we get this image.
+
+![Fourth Cornell Box rendering](four_cornell.jpg)
+
+This is exactly what we were looking for! We are now going to move on to implementing our intersect functions. We looked at the triangle intersect code in the graphics codex and modeled our function after it. We also set up the structure for intersect scene. Our first issue was that we could not get the tris out of our tri tree pointer. For some reason, the triTree[i] in our for loop was giving us a tritree base instead of the tri. We first tried getting just the verticies from the tri tree base's CPUVertexArray. This was giving us an issue when we tried making an array of verticies. Eventually we realized that we needed the tris to get the verticies in a form we wanted. A quick fix to this was to just simply pass the tri tree by value. This will be fixed in polish later. This issue took us a half hour.
+
+Our intersect method now compiles and returns the following image. 
+![Triangle intersect initial rendering](triangle_intersect_one.jpg)
+
+We realize that we are simply returning the first surfel found, not the closest surfel. This was an easy fix.
+
+![Triangle intersect second rendering](triangle_intersect_working.jpg)
+
+This looks good to us. Its not exactly what tritrees intersect scene produces, but we think it might by our epsilon. This will be fixed during polish. We're calling this mvp and polishing later.
+
+Next we implemented the math for the sphere intersection. We also talked out how to do the surfel generation once we find a point. This was relatively quick, but we decided to call this bare bones implementation mvp and work on adding shadows. After a quick break away from the lab.
+
+2016-09-24: Debugging Pt 2(5-6)
+====================================================================================
+ We've realized that the debugger was giving us the wrong line, the incorrect line was the line above it where we gave a non unit vector to a ray constructor. We called .direction() on that vector to make it a unit vector and our bug was fixed. Hooray! To get a better look at the image, if no surfel was intersected, we colored that pixel white. This helped us look at where there should be an image of the Cornell box.
+
+We finally got an image rendered!
+![Initial Cornell Box rendering](initial_cornell_box.jpg)
+
+Obviously, this isn't the correct image. NaN values are being assigned to L in our shading function. This causes most of the pixels to be black.  This issue was being caused by using the inverse direction function on the worldRay. To fix this, we simply multiplied the wordRay direction vector by -1.
+
+![Second Cornell Box rendering](second_cornell_box.jpg)
+ This is much better, but for some reason, the values are approaching zero and then going negative once it gets past a certain row. We printed to the output at various points in our shade function to see where it all goes negative. We now see that this is happening with the dot product. We're trying adding an absolute value around the dot product to see what that gets us.
+
+![Third Cornell Box rendering](third_cornell_box.jpg)
+ This is definitely better, but this isn't a solution. We have no idea what might be causing this bug. At first we thought it might be that there is a variable that is continuosly changed after multiple calls to the shade function, but we couldn't find any such variable. We've decided to stop working on this for the day.
+
+2016-09-24: Debugging Pt 1(2:30 - 4)
+====================================================================================
+We are spending this day working on polish for our Ray Tracer class and specifically the shade function. We are using TriTrees intersectScene method so that we knew the issues came from our shade function and RayTracer class.
+
+Our first bug was that we had a long line of code not compiling, this turned out to be a simple mismatched parenthesis. This was a simple fix.
+
+Our next bug was that we were not initializing our image variable correctly.  An email was sent out that had the solution to this issue. We simply needed to pass the correct parameters into the constructer and this bug was fixed.
+
+Our next bug involved passing the triTree using a shared pointer. For some reason, this would not compile. The solution was to drop the shared_ptr and simply pass a tritree by reference. 
+
+Our next bug was that we had an assertion failed that ray.direction isnt a unit vector. We looked at the line from our code that it said was causing this assertion error and it was where we called Biradiance and gave it a point. This confused us because we were simply passing a point and not a ray. We looked over all our shade code, specifically at our rays. We were using the wrong ray for w_o, we were using the camera line of sight ray instead of one from the point to the camera. We were also implementing our w_i incorrectly. We change that implementation. This still didn't fix our bug. We're taking a break and coming back to the code in an hour to see if fresh eyes can help us fix the bug.
+
+2016-09-22: Starting the Project (1 - 4:30)
+====================================================================================
+First we started working on our user interface. We did this mostly by copying code from the meshes lab and changing the names around. We have some sort of bug with the GuiPane addDropDownList method. Our user interface is visible but we since we could not get the drop down list to work, we've hard coded in the resolution. We're calling this GUI MVP and moving onto building the framework for our renderer.
+
+We started coding by making our RayTracer class and adding function definitions into the header. We looked at the graphics codex and the lab advice to figure out the structure of our program. Once we had the structure, we reasoned through how we thought the implementation would work. We added the code we knew we needed and this helped us figure out what parameters our functions needed. With this basic framework up, we have the meat of our implementation done, so we are calling this the mvp for the RayTracer class.
+
+At four, Diego worked on the shade function for a half hour. The code did not compile, but the core concepts were in place so we're calling that shade mvp.
+
+<!-- Markdeep: -->
+<style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace;}</style><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

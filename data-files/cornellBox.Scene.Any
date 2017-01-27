@@ -1,0 +1,155 @@
+// -*- c++ -*-
+{
+    name = "Cornell Box";
+    
+    models = {
+      whiteWall = ArticulatedModel::Specification {
+        filename = "model/cube/cube.obj";
+        preprocess = {
+            setMaterial(all(), Color3(1, 1, 1));
+            transformGeometry(all(), Matrix4::scale(2.0, 2.0, 0.01));
+        };
+      };
+
+    redWall = ArticulatedModel::Specification {
+        filename = "model/cube/cube.obj";
+        preprocess = {
+            setMaterial(all(), Color3(1, 0, 0));
+            transformGeometry(all(), Matrix4::scale(0.01, 2.0, 2.0));
+        };
+      };
+
+    greenWall = ArticulatedModel::Specification {
+        filename = "model/cube/cube.obj";
+        preprocess = {
+            setMaterial(all(), Color3(0, 1, 0));
+            transformGeometry(all(), Matrix4::scale(0.01, 2.0, 2.0));
+        };
+      };
+
+    shortCube = ArticulatedModel::Specification {
+        filename = "model/cube/cube.obj";
+        preprocess = {
+            setMaterial(all(), Color3(1, 1, 1));
+            transformGeometry(all(), Matrix4::scale(0.65, 0.65, 0.65));
+        };
+      };
+
+    tallCube = ArticulatedModel::Specification {
+        filename = "model/cube/cube.obj";
+        preprocess = {
+            setMaterial(all(), Color3(1, 1, 1));
+            transformGeometry(all(), Matrix4::scale(0.65, 1.2, 0.65));
+        };
+      };
+    };
+    
+    entities = {
+       skybox = Skybox {
+            texture = "cubemap/whiteroom/whiteroom-*.png";
+       };
+       
+       light1 = Light {
+            attenuation = ( 0, 0, 1 );
+            bulbPower = Power3(60);
+            extent = Vector2(0.75, 0.75 );
+            castsShadows = true;
+            enabled = true;
+            frame = CFrame::fromXYZYPRDegrees(0, 0.96, 1, 0, -90, 0);
+            shadowMapSize = Vector2int16(1024, 1024);
+            producesDirectIllumination = true; 
+            producesIndirectIllumination = true; 
+            spotHalfAngleDegrees = 45;
+            spotSquare = true;
+            canChange = false;
+            type = "SPOT";
+        };
+
+       light2 = Light {
+            attenuation = ( 0, 0, 1 );
+            bulbPower = Power3(60);
+            extent = Vector2(0.75, 0.75 );
+            castsShadows = true;
+            enabled = true;
+            frame = CFrame::fromXYZYPRDegrees(0, 0.96, 1, 0, 0, 0);
+            shadowMapSize = Vector2int16(1024, 1024);
+            producesDirectIllumination = true; 
+            producesIndirectIllumination = true; 
+            spotHalfAngleDegrees = 45;
+            spotSquare = true;
+            canChange = false;
+            type = "SPOT";
+        };
+
+       light3 = Light {
+            attenuation = ( 0, 0, 1 );
+            bulbPower = Power3(60);
+            extent = Vector2(0.75, 0.75 );
+            castsShadows = true;
+            enabled = true;
+            frame = CFrame::fromXYZYPRDegrees(0, 0.96, 1, 90, 0, 0);
+            shadowMapSize = Vector2int16(1024, 1024);
+            producesDirectIllumination = true; 
+            producesIndirectIllumination = true; 
+            spotHalfAngleDegrees = 45;
+            spotSquare = true;
+            canChange = false;
+            type = "SPOT";
+        };
+
+       light4 = Light {
+            attenuation = ( 0, 0, 1 );
+            bulbPower = Power3(60);
+            extent = Vector2(0.75, 0.75 );
+            castsShadows = true;
+            enabled = true;
+            frame = CFrame::fromXYZYPRDegrees(0, 0.96, 1, -90, 0, 0);
+            shadowMapSize = Vector2int16(1024, 1024);
+            producesDirectIllumination = true; 
+            producesIndirectIllumination = true; 
+            spotHalfAngleDegrees = 45;
+            spotSquare = true;
+            canChange = false;
+            type = "SPOT";
+        };
+
+        ceiling = VisibleEntity {
+            model = "whiteWall";
+            frame = CFrame::fromXYZYPRDegrees(0, 1, 1, 0, 90, 0);
+        };
+
+        floor = VisibleEntity {
+            model = "whiteWall";
+            frame = CFrame::fromXYZYPRDegrees(0, -1, 1, 0, 90, 0);
+        };
+
+        backWall = VisibleEntity {
+            model = "whiteWall";
+            frame = CFrame::fromXYZYPRDegrees(0, 0, 0, 0, 0, 0);
+        };
+
+        rightWall = VisibleEntity {
+            model = "greenWall";
+            frame = CFrame::fromXYZYPRDegrees(1, 0, 1, 0, 0, 0);
+        };
+
+        leftWall = VisibleEntity {
+            model = "redWall";
+            frame = CFrame::fromXYZYPRDegrees(-1, 0, 1, 0, 0, 0);
+        };
+
+        shortCube = VisibleEntity {
+            model = "shortCube";
+            frame = CFrame::fromXYZYPRDegrees(0.35, -0.65, 1.4, 65, 0, 0);
+        };
+
+        tallCube = VisibleEntity {
+            model = "tallCube";
+            frame = CFrame::fromXYZYPRDegrees(-0.35, -0.4, 0.5, 20, 0, 0);
+        };
+
+        camera = Camera {
+            frame = CFrame::fromXYZYPRDegrees(0, 0, 5);
+        };
+    };
+};

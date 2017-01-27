@@ -1,0 +1,68 @@
+            **Lab 3: Rays**
+             *John Freeman ( jcf1@williams.edu ) and Diego Gonzalez ( drg4@williams.edu )*
+
+Rendering Algorithm
+========================================
+ First we need to specify a virtual image plane as a plane in front of the camera . This plane will be divided up into coordinates that correspond to the desired number of pixels. Using the plane and our camera position, we can find the direction vector needed to do the ray tracing. Once we find our direction vector from the camera for a specific pixel, we need to determine whether or not a surface is intersected by that line of sight. This will be tested differently depending on the primitive we are dealing with. If a primitive is intersected, we need to figure out what the light level is on that surface. This can be determined by the right side of the rendering equation. Since the right side of the rendering equation is an integral, we can approximate this as a finite set of points. This will give us a close approximation of all the light coming into the point intersected on the surface. 
+
+We feel our intersectSphere code is correct since it is based on math from both the Graphics Codex and class, but did not create sphere primitives to test it on, as we felt our time could be spent better on other features.
+
+Our intersectTriangle is based heavily on the triangle intersect code from Graphics Codex.  We esentially just used that code, but made epsilon into a variable that we could change to make affect look different if we chose to.
+
+Our code for shading is very similar to the L_o method in the Graphics Codex chapter on direct Illumination.  We had to include more information to our isVisible method including bumping our surfel point we are trying to check if it is visible in order to make sure a point that should be registered as visible is visible without having to worry about some sort of rounding error in floating point to give a worng result.
+
+Results
+========================================
+![Triangle without Indirect Lighting](triangle_norays.png)
+![Conell Box without Indirect Lighting](cornellBox_norays.png)
+![Conell Box with 20 Rays of Indirect Lighting](Cornell_box_20il.png)
+We were unable to finish Cornell Box with 2048 Rays of Indirect Light or Sporanza due to multithreading not working.
+![Custom Scene without Indirect Lights](custom_direct.png)
+![Custom Scene with 20 Rays of Indirect Lights](custom_indirect.png)
+
+
+![Cores Graph](cores.png)
+No Triangles Graph
+![Pixels Graph](pixels.png)
+![Lights Graph](lights.png)
+![Indirect Rays Graph](indirect.png)
+
+The graphs are linear.  As you increase the different variables, the runtime should increase linearly.  This wouldn't hold for complex scenes with different types of surfaces that react to light differently.
+
+Questions
+========================================
+1. We could imagine a line is going through the middle of the top and bottom of the cylinder such that the line is perpendicular to the top and bottom surfaces of the cylinder.  If we then knew a point on the top and bottom of the cylinder along with it's diameter, we could then calculate an intersection with the cylinder given some ray by checking if that ray will produce a point that is a radius away from the line and falls between the range of being between the top and bottom of the cylinder.  We would also need to check for an intesection with the top or bottom of the cylinder by specifying a surface that is a circle with the diameter of the cylinder, and see if a ray hits the surface.
+
+2. You would define the furthest you would look for the surface as some distance d. Then you would do a binary search along ray, checking to see if the poisitions fit the height function y(x,y) within some episilon. Once you have found a point that fits enough, you would return it. If you do not find a point after a dividing the ray by the max recursive levels, you return the fact that no surface was intersected.
+
+3. A binary tree can be used to approximate the light value at a given point. Essentially, you would figure out if the bright value was smaller or larger than some median value and do that all the way down the tree. This would be faster than computing the actual light value and would result in a smooth surface.
+
+Reflection
+==========================================
+We deserve a B.  Our workflow was not great for this project, and we got stuck on many bugs that we spent far too long trying to correct.  We also have a lot of shadow acne with our indirect lights.  We thought we were good at asking for help from others in the class, Jamie, and consulting the discussion board when we felt stuck.  All of our bugs ended up being more related to the library and syntax rather than the concepts, so once we fixed those errors, our code mostly seemed to work as intended minus the occational tinkering of values.  Overall, we are happy with our final product for the lab, but disappointed by some of the bugs and hardships we faced in getting to this point.
+
+* We feel our code style is decent on this lab, our programming structure and variable names are good, but the layout of our ray tracer class could be improved.
+* Our workflow wasn't great; we spent far too long on syntax and library issues, and probably should have asked for help sooner.
+* We feel our report almost fulfills the requirements, though we feel we probably should have spent more time in polishing it.  No rendering equations due to no multithreading.
+
+We learned a lot.
+
+* The fundamentals of ray tracing, and the foundation of modern computer graphics.
+* Vector math.
+* A lot about the use of pointers and shared_ptrs in C++.
+* The g3d library.
+* Threading and it's benefits.
+* Debugging in Visual Studio.
+* SVN.
+* The joys of pair programming (a friend in Hell).
+* The horrors of pair programming (being 2x less productive).
+
+Time Spent
+=============================================
+John Time: 6h to MVP + 10h Polish
+Diego Time: 6.5h to MVP + 10h Polish
+
+We acknowledged when we hit MVP, which did not compile but had all the correct concepts and methods in place.  We then decided we both wanted to spend time to make it better with full knowledge that we could stop at any time.
+
+<!-- Markdeep: -->
+<style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace;}</style><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>
